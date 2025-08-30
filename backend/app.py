@@ -8,10 +8,8 @@ from scanners.csrf_scanner import test_csrf
 from scanners.ssl_scanner import test_ssl
 from openrouter_api import get_openrouter_suggestions
 
-
 app = Flask(__name__)
 CORS(app)  # ✅ Allow all origins (frontend can now hit backend)
-
 
 @app.route("/scan", methods=["POST"])
 def scan():
@@ -42,6 +40,12 @@ def scan():
         # 🤖 Get AI-powered suggestions & score
         ai_suggestions = get_openrouter_suggestions(results)
 
+        # Make sure always returns expected keys for frontend robustness
+        if isinstance(ai_suggestions, dict):
+            ai_suggestions.setdefault("vulnerabilities", [])
+            ai_suggestions.setdefault("recommendations", [])
+            ai_suggestions.setdefault("security_score", None)
+
         return jsonify({
             "success": True,
             "scan_results": results,
@@ -50,7 +54,6 @@ def scan():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

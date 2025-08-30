@@ -242,8 +242,7 @@ export default function SecureScanAI() {
   return (
     <div
       style={{
-        height: "100%",
-        width: "100%",
+        height: "100vh",
         background: "#0a0f1e",
         fontFamily: "Segoe UI, sans-serif",
         color: "#e0e0e0",
